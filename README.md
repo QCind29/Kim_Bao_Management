@@ -5,22 +5,31 @@ This is a Flutter project that utilizes Firebase Realtime Database for storing d
 ## Features
 Firebase Realtime Database: Stores data objects such as Products, Tasks, and Notes.
 Firebase Authentication: Provides user authentication functionality.
-Flutter UI: Beautifully designed user interface using Flutter widgets
+Flutter UI: Beautifully designed user interface using Flutter widgets.
 
 ## Getting Started
 To get started with this project, follow these steps:
 
 1. Clone the repository to your local machine:
+
   git clone https://github.com/QCind29/Kim_Bao_Management.git
-2. Set up Firebase for your project:
+  
+3. Set up Firebase for your project:
+
   Create a Firebase project on the Firebase Console.
-  Enable Firebase Authentication and configure your preferred sign-in methods.
-Set up Firebase Realtime Database and configure security rules according to your project's requirements.
-3. Add Firebase configuration to your Flutter project:
+  Anable Firebase Authentication and configure your preferred sign-in methods.  
+  Set up Firebase Realtime Database and configure security rules according to your project's requirements.
+  
+5. Add Firebase configuration to your Flutter project:
+ 
   Add the Firebase configuration files (google-services.json for Android and GoogleService-Info.plist for iOS) to your Flutter project's android/app and ios/Runner directories, respectively.
-4. Install dependencies:
+  
+6. Install dependencies:
+
   flutter pub get
-5. Run the app:
+  
+8. Run the app:
+   
    flutter run
 
   ## Project Structure
