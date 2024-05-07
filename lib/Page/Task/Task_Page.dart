@@ -8,11 +8,13 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:kbstore/Model/Task.dart';
 import 'package:kbstore/Provider/Task_Provider.dart';
+import 'package:kbstore/Service/Auth_Service.dart';
+import 'package:kbstore/Widget/CustomAlertDialog.dart';
+import 'package:kbstore/Widget/CustomAppBar.dart';
 
 import 'package:kbstore/Widget/UpdateFormDialog.dart';
 import 'package:provider/provider.dart';
 import 'package:kbstore/Util.dart';
-
 
 class Task_Page extends StatefulWidget {
   const Task_Page({Key? key}) : super(key: key);
@@ -28,6 +30,7 @@ class _Task_PageState extends State<Task_Page> {
   final ScrollController _scrollController = ScrollController();
   final Task_Provider _task_provider = Task_Provider();
   String searchKey = "";
+  final AuthService _authService = AuthService();
 
   refresh() async {
     final provider = Provider.of<Task_Provider>(context, listen: false);
@@ -58,14 +61,8 @@ class _Task_PageState extends State<Task_Page> {
     final List<Task>? ListTask = task_provider.getFilteredTask(searchKey);
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("Cần làm",
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold
-        ),),
-        backgroundColor: Colors.blueAccent,
+      appBar: CustomAppBar(
+        title: "Cần làm",
       ),
       body: (task_provider.isLoading == false)
           ? SafeArea(
@@ -105,20 +102,32 @@ class _Task_PageState extends State<Task_Page> {
                                 contentPadding: EdgeInsets.all(20),
                                 hintText: "Nhập nội dung..."),
                             onSubmitted: (text) async {
-                              await message.text.isNotEmpty
-                                  ? setState(() {
-                                      task_provider.addNote(text);
-                                      message.clear();
-                                      refresh();
-                                      // Scroll to the bottom after adding the message
-                                      _scrollController.animateTo(
-                                        _scrollController
-                                            .position.maxScrollExtent,
-                                        duration: Duration(milliseconds: 300),
-                                        curve: Curves.easeOut,
-                                      );
-                                    })
-                                  : {};
+                              bool isLoggedIn =
+                                  await _authService.isUserLoggedIn();
+                              if (isLoggedIn) {
+                                await message.text.isNotEmpty
+                                    ? setState(() {
+                                        task_provider.addNote(text);
+                                        message.clear();
+                                        refresh();
+                                        // Scroll to the bottom after adding the message
+                                        _scrollController.animateTo(
+                                          _scrollController
+                                              .position.maxScrollExtent,
+                                          duration: Duration(milliseconds: 300),
+                                          curve: Curves.easeOut,
+                                        );
+                                      })
+                                    : {};
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => CustomAlertDialog(
+                                    content:
+                                        "Bạn cần đăng nhập để thực hiện chức năng này",
+                                  ),
+                                );
+                              }
                             },
                           ),
                         ),
@@ -167,116 +176,122 @@ class _Task_PageState extends State<Task_Page> {
             a[index].Done.toString());
 
         return GestureDetector(
-            onTap: () {
-              // Navigator.push(
-              //     context,
-              //     CupertinoPageRoute(
-              //         fullscreenDialog: true,
-              //         builder: (context) => TaskEditPage(
-              //               note: currentNote,
-              //               isUpdate: true,
-              //             )));
-            },
-            onLongPress: () {
+          onTap: () {},
+          onLongPress: () async {
+            bool isLoggedIn = await _authService.isUserLoggedIn();
+            if (isLoggedIn) {
               _showAlertDialog(context, currentNote);
-            },
-            child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                child: Align(
-                  alignment: currentNote.SentByMe
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Row(
-                    mainAxisAlignment: currentNote.SentByMe
-                        ? MainAxisAlignment.end
-                        : MainAxisAlignment.start,
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) => CustomAlertDialog(
+                  content: "Bạn cần đăng nhập để thực hiện chức năng này",
+                ),
+              );
+              // print("Line 80 Product_Page chưa đăng nhập");
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            child: Align(
+              alignment: currentNote.SentByMe
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft,
+              child: Row(
+                mainAxisAlignment: currentNote.SentByMe
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 16.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: a![index].SentByMe
+                              ? Colors.blue
+                              : Colors.grey[300],
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                    checkState == true
-                                        ? "Hoàn thành"
-                                        : "Chưa hoàn thành",
-                                    style: TextStyle(
-                                      color: checkState == true
-                                          ? Colors.green
-                                          : Colors.red,
-                                    )),
-                                IconButton(
-                                    onPressed: () {
-                                      toggleTaskCompletion();
-                                    },
-                                    icon: Icon(
-                                      checkState == true
-                                          ? Icons.check_circle_rounded
-                                          : Icons
-                                              .radio_button_unchecked_rounded,
-                                      color: checkState == true
-                                          ? Colors.green
-                                          : Colors.red,
-                                    ))
-                              ],
+                            Text(
+                              a![index].Content,
+                              style: TextStyle(
+                                fontSize: 25,
+                                color: a![index].SentByMe
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                              softWrap: true,
+                              maxLines: null,
                             ),
-                            Container(
-                                child: Text(
+                            SizedBox(height: 4.0),
+                            Text(
+                              DateFormat('dd/MM/yy HH:mm')
+                                  .format(DateTime.parse(a[index].DateCreate)),
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                color: a![index].SentByMe
+                                    ? Colors.white70
+                                    : Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            checkState ? "Hoàn thành" : "Chưa hoàn thành",
+                            style: TextStyle(
+                              color: checkState ? Colors.green : Colors.red,
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () async {
+                              bool isLoggedIn =
+                                  await _authService.isUserLoggedIn();
+                              if (isLoggedIn) {
+                                toggleTaskCompletion();
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => CustomAlertDialog(
+                                    content:
+                                        "Bạn cần đăng nhập để thực hiện chức năng này",
+                                  ),
+                                );
+                              }
+                            },
+                            icon: Icon(
+                              checkState
+                                  ? Icons.check_circle_rounded
+                                  : Icons.radio_button_unchecked_rounded,
+                              color: checkState ? Colors.green : Colors.red,
+                            ),
+                          ),
+                          Container(
+                            child: Text(
                               a![index].Done == true && a![index].DateDone != ""
                                   ? DateFormat('dd/MM/yy HH:mm')
                                       .format(DateTime.parse(a[index].DateDone))
                                   : '',
-                            ))
-                          ],
-                        ),
-                      ),
-                      Flexible(
-                        child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 8.0,
-                              horizontal: 16.0,
                             ),
-                            decoration: BoxDecoration(
-                              color: a![index].SentByMe
-                                  ? Colors.blue
-                                  : Colors.grey[300],
-                              borderRadius: BorderRadius.circular(16.0),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  child: Text(
-                                    softWrap: true,
-                                    maxLines: null,
-                                    a![index].Content,
-                                    style: TextStyle(
-                                      fontSize: 25,
-                                      color: a![index].SentByMe
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 4.0),
-                                Text(
-                                  DateFormat('dd/MM/yy HH:mm').format(
-                                      DateTime.parse(a[index].DateCreate)),
-                                  style: TextStyle(
-                                    fontSize: 12.0,
-                                    color: a![index].SentByMe
-                                        ? Colors.white70
-                                        : Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            )),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                )));
+                ],
+              ),
+            ),
+          ),
+        );
       },
     );
   }
@@ -355,6 +370,7 @@ class _Task_PageState extends State<Task_Page> {
   Widget LoadingUI() {
     return const Center(child: CircularProgressIndicator());
   }
+
   void _showUpdateFormDialog(BuildContext context, Task task) {
     //
     showDialog(
@@ -366,5 +382,4 @@ class _Task_PageState extends State<Task_Page> {
       },
     );
   }
-
 }

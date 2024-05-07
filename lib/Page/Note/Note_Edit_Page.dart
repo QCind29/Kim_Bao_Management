@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kbstore/Model/Note.dart';
 import 'package:kbstore/Model/Task.dart';
 import 'package:kbstore/Provider/Note_Provider.dart';
-import 'package:kbstore/Service/Task_Service.dart';
-import 'package:kbstore/Util.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:kbstore/Widget/CustomAppBar.dart';
 import 'package:provider/provider.dart';
 
 class NoteEditPage extends StatefulWidget {
@@ -20,7 +18,6 @@ class NoteEditPage extends StatefulWidget {
 }
 
 class _NoteEditPageState extends State<NoteEditPage> {
-  String title = "Thêm mới nhắc nhở";
   TextEditingController contentController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   User? user = FirebaseAuth.instance.currentUser;
@@ -41,13 +38,8 @@ class _NoteEditPageState extends State<NoteEditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            title,
-            style: TextStyle(color: Colors.white),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.blueAccent,
+        appBar: CustomAppBar(
+          title: Title,
           actions: [
             IconButton(
               onPressed: () {
@@ -118,18 +110,15 @@ class _NoteEditPageState extends State<NoteEditPage> {
   Future<void> addNote() async {
     String c = contentController.text;
     String n = nameController.text;
-    if( c != null && n!= null || c != "" && n!=""){
-
+    if (c != null && n != null || c != "" && n != "") {
       try {
         await _note_provider.addNote(c, n);
       } on Exception catch (e) {
         print(e);
       }
-
-    } else{
+    } else {
       print("Error");
     }
-
   }
 
   updateNote() {
@@ -137,6 +126,11 @@ class _NoteEditPageState extends State<NoteEditPage> {
     widget.note!.Content = contentController.text;
 
     Provider.of<Note_Provider>(context, listen: false).updateNote(widget.note!);
-    Navigator.pop(context);
+    // Navigator.pop(context);
+    // showDialog(
+    //     context: context,
+    //     builder: (context) => CustomAlertDialog(
+    //           content: "Bạn cần đăng nhập để thực hiện chức năng này",
+    //         ));
   }
 }

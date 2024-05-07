@@ -16,10 +16,10 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
   @override
   void initState() {
     super.initState();
-    _checkAuthentication();
+    checkAuthentication();
   }
 
-  void _checkAuthentication() async {
+  void checkAuthentication() async {
     bool isLoggedIn = await _authService.isUserLoggedIn();
     if (isLoggedIn) {
       // User is already authenticated, navigate to home screen
@@ -31,7 +31,7 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
       // User is not authenticated, navigate to login screen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Login_Page()),
+        MaterialPageRoute(builder: (context) => MyHomePage()),
       );
     }
   }

@@ -101,6 +101,7 @@ class Task_Service {
 
         if (taskData != null) {
           final List<Task> tasks = [];
+          List<Task> _tasks = [];
 
           // Iterate through each child node (task) in the snapshot
           for (final childSnapshot in dataSnapshot.children) {
@@ -127,22 +128,16 @@ class Task_Service {
                   SentByMe: innerMap!['SentByMe'] ?? false,
                   DateDone: innerMap?['DateDone']?.toString() ?? "",
                 );
-                // print("Line 158 Task_serice:  " + task.toString());
-
-                // Set 'done' and 'sentByMe' properties based on user email (optional)
                 if (task.Userid == user?.email) {
                   // task.Done = true;
                   task.SentByMe = true;
                 }
-
                 tasks.add(task);
-                tasks.sort((a, b) => DateTime.parse(a.DateCreate)
-                    .compareTo(DateTime.parse(b.DateCreate)));
+                 tasks.sort((a, b) => DateTime.parse(b.DateCreate)
+                    .compareTo(DateTime.parse(a.DateCreate)));
               }
             });
-            // print("Line 145 Task_service: " + childData.toString());
 
-            // Create a new Task object from the child's data
           }
 
           return tasks;

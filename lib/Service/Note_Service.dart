@@ -1,12 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:kbstore/Model/Note.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Note_Service {
   User? user = FirebaseAuth.instance.currentUser;
+  final databaseReference = FirebaseDatabase.instance.ref().child('note');
+
+
+  void enableSyncing() {
+    databaseReference.keepSynced(true);
+  }
+
+
 
   Future<void> deleteNote(String id) async {
-    final databaseReference = FirebaseDatabase.instance.ref().child('note');
+    // final databaseReference = FirebaseDatabase.instance.ref().child('note');
 
     try {
       await databaseReference.child('noteId/$id').remove();
@@ -18,14 +27,14 @@ class Note_Service {
 
   Future<void> updateNote(
       String id, String? receiver, String? name, String? content) async {
-    final databaseReference = FirebaseDatabase.instance.ref().child('note');
+    // final databaseReference = FirebaseDatabase.instance.ref().child('note');
     String? a = DateTime.now().toString(); // Reference to the child node
     try {
       if (name != null && content != null) {
         await databaseReference.child('noteId/$id').update({
           'Content': content,
           'Name': name,
-          'Receiver': receiver,
+          'Receiver': receiver ?? "",
           'DateDone': a
         });
         print('Note content updated successfully.');
@@ -41,7 +50,7 @@ class Note_Service {
   }
 
   Future<void> addTaskToFirebase(String Content, String Name) async {
-    final databaseReference = FirebaseDatabase.instance.ref().child('note');
+    // final databaseReference = FirebaseDatabase.instance.ref().child('note');
 
     String? noteId = databaseReference.push().key;
 
@@ -70,7 +79,7 @@ class Note_Service {
 
   Future<List<Note>> getNotes() async {
     // Get a reference to the 'task' node in Firebase Realtime Database
-    final databaseReference = FirebaseDatabase.instance.ref().child('note');
+    // final databaseReference = FirebaseDatabase.instance.ref().child('note');
 
     try {
       // Fetch data from the database as a DataSnapshot
@@ -103,20 +112,16 @@ class Note_Service {
               if (childData != null) {
                 final Note note = Note(
                   id: key.toString(),
-                  DateDone: innerMap?['DateDone']?.toString()??"",
+                  DateDone: innerMap?['DateDone']?.toString() ?? "",
                   Userid: innerMap?['Userid']?.toString() ?? "",
                   Content: innerMap?['Content']?.toString() ?? "",
                   DateCreate: innerMap?['DateCreate']?.toString() ?? '',
                   Name: innerMap?['Name']?.toString() ?? "",
                   Receiver: innerMap?['Receiver']?.toString() ?? "",
                 );
-
-
                 notes.add(note);
                 notes.sort((a, b) => DateTime.parse(a.DateCreate)
                     .compareTo(DateTime.parse(b.DateCreate)));
-
-
               }
             });
           }

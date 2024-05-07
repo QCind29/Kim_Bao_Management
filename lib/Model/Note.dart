@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:firebase_database/firebase_database.dart';
+
 List<Note> TaskFromJson(String str) =>
     List<Note>.from(json.decode(str).map((x) => Note.fromJson(x)));
 
@@ -24,6 +26,17 @@ class Note {
       required this.Content,
       required this.DateDone,
       required this.Receiver});
+
+  Note.fromSnapshot(DataSnapshot snapshot)
+      : id = snapshot.key ?? '',
+        Userid = (snapshot.value as Map<dynamic, dynamic>?)?['Userid']??'',
+        Content = (snapshot.value as Map<dynamic, dynamic>?)?['Content']??'',
+        DateDone = (snapshot.value as Map<dynamic, dynamic>?)?['DateDone']??'',
+        Receiver = (snapshot.value as Map<dynamic, dynamic>?)?['Receiver']??'',
+        Name = (snapshot.value as Map<dynamic, dynamic>?)?['Name']??'',
+        DateCreate = (snapshot.value as Map<dynamic, dynamic>?)?['DateCreate']??'';
+
+
 
   Note.fromMap(Map<String, dynamic> res)
       : id = res['id'],

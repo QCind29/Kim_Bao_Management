@@ -44,7 +44,13 @@ class AuthService {
     if (_prefs == null) await _initPrefs();
 
     await _prefs!.setBool('isLoggedIn', false);
+    print("Sign out successfully");
   }
+
+  Future<void> _signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
   // Future<void> logoutUser() async {
   //   // Sign out from Firebase Auth
   //   await FirebaseAuth.instance.signOut();

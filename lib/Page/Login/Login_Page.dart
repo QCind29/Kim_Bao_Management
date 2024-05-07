@@ -81,6 +81,8 @@ class _LoginState extends State<Login_Page> {
                 bool checkEmail = await checkEmailFormat(_email);
                 if(checkEmail == true ) {
                   await loginCheck(_email, _password);
+                  // await loginCheck('qcind2909@gmail.com', '123456789');
+
 
                 } else{
                   showAutoDismissDialog(

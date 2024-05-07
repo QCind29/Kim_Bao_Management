@@ -1,7 +1,9 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:kbstore/Page/CheckAuthState.dart';
+import 'package:kbstore/Page/More/More_Page.dart';
 import 'package:kbstore/Page/Note/Note_Page.dart';
 import 'package:kbstore/Page/Product/Product_Page.dart';
 import 'package:kbstore/Page/Task/Task_Page.dart';
@@ -14,6 +16,10 @@ import 'package:kbstore/Provider/Product_Provider.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseDatabase.instance.setPersistenceEnabled(true);
+  final presenceRef = FirebaseDatabase.instance.ref("disconnectmessage");
+// Write a string when this client loses connection
+  presenceRef.onDisconnect().set("I disconnected!");
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => Task_Provider()),
@@ -32,8 +38,9 @@ class MyHomePageState extends State<MyHomePage> {
   final List<Widget> listBody = [
     const Product_Page(),
     const Task_Page(),
-    // const Home_Activity()
     const Note_Page(),
+    const More_Page()
+
   ];
 
   @override
@@ -45,14 +52,15 @@ class MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: listBody[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.blue,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.blueAccent,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.white,
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.list_alt_sharp), label: 'Danh sách'),
+        items: <BottomNavigationBarItem> [
+          BottomNavigationBarItem(icon: Icon(Icons.list_alt_sharp), label: 'Danh sách'),
           BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Nhắc nhở'),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Ghi chú')
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Ghi chú'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Khác')
         ],
         currentIndex: currentIndex,
         onTap: (index) {
