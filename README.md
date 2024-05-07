@@ -13,6 +13,10 @@ To get started with this project, follow these steps:
 1. Clone the repository to your local machine:
 
   git clone https://github.com/QCind29/Kim_Bao_Management.git
+
+  Login with account: 
+  Email: qcuong@gmail.com 
+  Password: 123456789
   
 3. Set up Firebase for your project:
 
@@ -31,7 +35,10 @@ To get started with this project, follow these steps:
 8. Run the app:
    
    flutter run
-
+## Demo
+You can install apk file at APK folder for trial. Login with qcuong account above.
+Please do not edit, update or do anything.
+Thank you.
   ## Project Structure
   flutter_firebase_project/
 ├── android/
