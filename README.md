@@ -13,10 +13,8 @@ To get started with this project, follow these steps:
 1. Clone the repository to your local machine:
 
   git clone https://github.com/QCind29/Kim_Bao_Management.git
-
-  Login with account: 
-  Email: qcuong@gmail.com 
-  Password: 123456789
+or download and install APK file:
+APK/Storage_Management
   
 3. Set up Firebase for your project:
 
