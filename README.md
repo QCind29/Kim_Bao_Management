@@ -1,4 +1,4 @@
-# Kim Bao Management
+# Store Management
 
 This is a Flutter project that utilizes Firebase Realtime Database for storing data objects such as Products, Tasks, and Notes. It also integrates Firebase Authentication for user authentication.
 
