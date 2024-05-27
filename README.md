@@ -51,6 +51,6 @@ flutter run
 - You can login with user account:
 - *user@gmail.com*
 - *123456789*
-          Please do not edit, update or do anything.
-          Thank you.
+          - - Please do not edit, update or do anything.
+          - - Thank you.
 
