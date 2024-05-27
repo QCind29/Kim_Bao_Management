@@ -50,7 +50,7 @@ flutter run
 ## Demo
 - You can login with user account:
 - *user@gmail.com*
-- *123456779*
-Please do not edit, update or do anything.
-Thank you.
+- *123456789*
+          Please do not edit, update or do anything.
+          Thank you.
 
